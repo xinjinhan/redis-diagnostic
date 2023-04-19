@@ -1,0 +1,26 @@
+序号,性能诊断规则,英文指标名称,约束值公式,Redis-cli 查询命令
+1,内存使用率,Memory Usage,used_memory / maxmemory < 1,info memory
+2,缓存命中率,Cache Hit Ratio,keyspace_hits / (keyspace_hits + keyspace_misses) > 0.9,info stats
+3,连接数,Connection Count,connected_clients < maxclients,info clients
+4,慢查询,Slow Query,slow queries delay < slowlog-max-len,slowlog get
+5,CPU 使用率,CPU Usage,used_cpu_sys / server CPU cores < 1,info cpu
+6,磁盘使用率,Disk Usage,rdb_last_bgsave_status = OK; aof_last_bgrewrite_status = OK; used_disk_space / maxmemory < 1,info persistence
+7,带宽限制,Bandwidth Usage,N/A,N/A
+8,响应时间,Response Time,ping < 10 毫秒; commandstats 不超过 10 毫秒的操作占比 > 90%,ping 或 info commandstats
+9,客户端缓冲区,Client Buffer,client_recent_max_input_buffer / client_buffer_peak_usage < 1,info clients
+10,主从同步延迟,Replication Delay,master_repl_offset - min(slave_repl_offset) < max_repl_delay,info replication
+11,数据持久化,Data Persistence,rdb_bgsave_in_progress + aof_rewrite_in_progress = 0,info persistence
+12,网络延迟,Network Latency,ping 延迟 < 1 毫秒,redis-cli ping
+13,命令并发量,Command Concurrency,同时执行的命令数量 < maxclients * threadpool-size,info stats
+14,内存碎片率,Memory Fragmentation,used_memory_rss / used_memory < 1.5,info memory
+15,响应时间分布,Response Time Distribution,大多数请求的响应时间 < 1 毫秒,redis-cli --latency
+16,阻塞进程,Blocked Process,blocked_clients < 1,info clients
+17,缓存数据过期率,Cache Expiration Rate,expired_keys / (expired_keys + keyspace_hits + keyspace_misses) < 0.1,info stats
+18,慢查询比例,Slow Query Ratio,slow queries / total commands < 0.01,info stats
+19,缓存数据过期时间,Cache Expiration Time,average_ttl < 1 小时,info keyspace
+20,订阅发布并发量,Pub/Sub Concurrency,同时执行的 pub/sub 命令数量 < maxclients * threadpool-size,info stats
+21,持久化文件数量,Persistence File Count,rdb_number_of_cached_data_sets + aof_current_size / maxmemory < 1,info persistence
+22,客户端 QPS,Client QPS,客户端请求的 QPS 不应该超过 Redis 实例的处理能力,redis-benchmark 或者 client 向 redis 服务器发送命令
+23,内存限制,Memory Limit,used_memory / maxmemory < 0.8,info memory
+24,连接超时,Connection Timeout,连接超时率应该低于 0.01%,N/A
+25,备份恢复时间,Backup Recovery Time,从备份中恢复 Redis 实例所需的时间应该小于 maxmemory / 1000,备份和恢复 Redis 实例的时间
