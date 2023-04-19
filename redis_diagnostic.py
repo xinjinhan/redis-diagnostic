@@ -88,7 +88,7 @@ class RedisPerformanceDiagnosis:
         # 检查客户端缓冲区使用率是否超出限制
         if self.client_buffer['mean'] / self.client_buffer_peak_usage >= 1:
             return 'Client buffer usage exceeds the limit. You should optimize your Redis configuration or client ' \
-                   'application. '
+                   'application.'
         else:
             return 'Client buffer usage is within the limit.'
 
