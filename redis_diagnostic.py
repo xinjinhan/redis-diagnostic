@@ -6,7 +6,7 @@ import random
 class RedisPerformanceDiagnosis:
     def __init__(self, memory_usage, cache_hit_ratio, connection_count, slow_query, cpu_usage, disk_usage,
                  bandwidth_usage, response_time, client_buffer, **kwargs):
-        self.kwargs = kwargs
+        # 初始化 Redis 性能指标的值
         self.memory_usage = memory_usage
         self.cache_hit_ratio = cache_hit_ratio
         self.connection_count = connection_count
@@ -16,6 +16,7 @@ class RedisPerformanceDiagnosis:
         self.bandwidth_usage = bandwidth_usage
         self.response_time = response_time
         self.client_buffer = client_buffer
+        # 初始化 Redis 实例的其他配置参数
         self.max_memory = kwargs.get('max_memory', 1)
         self.max_clients = kwargs.get('max_clients', 1)
         self.slowlog_max_len = kwargs.get('slowlog_max_len', 1)
@@ -24,86 +25,67 @@ class RedisPerformanceDiagnosis:
         self.client_buffer_peak_usage = kwargs.get('client_buffer_peak_usage', 1)
 
     def check_memory_usage(self):
-        max_memory = self.kwargs.get('max_memory', 1)
-        if self.memory_usage / max_memory >= 1:
+        # 检查内存使用率是否超出限制
+        if self.memory_usage / self.max_memory >= 1:
             return 'Memory usage exceeds the limit. You should increase the memory limit.'
         else:
             return 'Memory usage is within the limit.'
 
     def check_cache_hit_ratio(self):
+        # 检查缓存命中率是否低于阈值
         if self.cache_hit_ratio <= 0.9:
             return 'Cache hit ratio is low. You should check your caching strategy.'
         else:
             return 'Cache hit ratio is good.'
 
     def check_connection_count(self):
-        max_clients = self.kwargs.get('max_clients', 1)
-        if self.connection_count >= max_clients:
+        # 检查连接数是否超出限制
+        if self.connection_count >= self.max_clients:
             return 'Connection count exceeds the limit. You should increase the max clients limit.'
         else:
             return 'Connection count is within the limit.'
 
     def check_slow_query(self):
-        slowlog_max_len = self.kwargs.get('slowlog_max_len', 1)
-        if max(self.slow_query) >= slowlog_max_len:
+        # 检查慢查询数量是否超出限制
+        if max(self.slow_query) >= self.slowlog_max_len:
             return 'There are too many slow queries. You should optimize your queries or increase the slowlog max len.'
         else:
             return 'Slow query count is within the limit.'
 
     def check_cpu_usage(self):
-        server_cpu_cores = self.kwargs.get('server_cpu_cores', 1)
-        if self.cpu_usage / server_cpu_cores >= 1:
+        # 检查 CPU 使用率是否超出限制
+        if self.cpu_usage / self.server_cpu_cores >= 1:
             return 'CPU usage exceeds the limit. You should optimize your Redis configuration or upgrade your server.'
         else:
             return 'CPU usage is within the limit.'
 
     def check_disk_usage(self):
-        maxmemory = self.kwargs.get('maxmemory', 1)
-        if self.disk_usage / maxmemory >= 1:
+        # 检查磁盘使用率是否超出限制
+        if self.disk_usage / self.max_memory >= 1:
             return 'Disk usage exceeds the limit. You should increase the memory limit or clean up the disk.'
         else:
             return 'Disk usage is within the limit.'
 
     def check_bandwidth_usage(self):
-        max_bandwidth = self.kwargs.get('max_bandwidth', 1)
-        if self.bandwidth_usage / max_bandwidth >= 1:
+        # 检查带宽使用率是否超出限制
+        if self.bandwidth_usage / self.max_bandwidth >= 1:
             return 'Bandwidth usage exceeds the limit. You should check your network connection.'
         else:
             return 'Bandwidth usage is within the limit.'
 
     def check_response_time(self):
+        # 检查响应时间是否超出阈值
         if max(self.response_time) >= 10:
             return 'Response time is slow. You should optimize your Redis configuration or network connection.'
         else:
             return 'Response time is good.'
 
     def check_client_buffer(self):
-        client_buffer_peak_usage = self.kwargs.get('client_buffer_peak_usage', 1)
-        if self.client_buffer / client_buffer_peak_usage >= 1:
-            return 'Client buffer usage exceeds the limit. You should optimize your Redis configuration or client ' \
-                   'application.'
+        # 检查客户端缓冲区使用率是否超出限制
+        if self.client_buffer / self.client_buffer_peak_usage >= 1:
+            return 'Client buffer usage exceeds the limit. You should optimize your Redis configuration or client application.'
         else:
             return 'Client buffer usage is within the limit.'
-
-
-# 示例输入数据
-input_data = {
-    'memory_usage': 250,
-    'cache_hit_ratio': 0.92,
-    'connection_count': 1000,
-    'slow_query': [1, 2, 3, 4, 5],
-    'cpu_usage': 2.5,
-    'disk_usage': 500,
-    'bandwidth_usage': 5,
-    'response_time': [5, 6, 7, 8, 9],
-    'client_buffer': 1000,
-    'max_memory': 500,
-    'max_clients': 2000,
-    'slowlog_max_len': 10,
-    'server_cpu_cores': 4,
-    'max_bandwidth': 10,
-    'client_buffer_peak_usage': 2000,
-}
 
 
 if __name__ == '__main__':
