@@ -95,33 +95,47 @@ class RedisPerformanceDiagnosis:
 
 def preprocess_input_data(input_data):
     # 对输入数据进行预处理，包括计算平均值、最大值和最小值
-    mean_memory_usage = sum(input_data['memory_usage']) / len(input_data['memory_usage'])
-    max_memory_usage = max(input_data['memory_usage'])
-    min_memory_usage = min(input_data['memory_usage'])
-    mean_cache_hit_ratio = sum(input_data['cache_hit_ratio']) / len(input_data['cache_hit_ratio'])
-    max_cache_hit_ratio = max(input_data['cache_hit_ratio'])
-    min_cache_hit_ratio = min(input_data['cache_hit_ratio'])
-    mean_connection_count = sum(input_data['connection_count']) / len(input_data['connection_count'])
-    max_connection_count = max(input_data['connection_count'])
-    min_connection_count = min(input_data['connection_count'])
-    mean_slow_query = sum(input_data['slow_query']) / len(input_data['slow_query'])
-    max_slow_query = max(input_data['slow_query'])
-    min_slow_query = min(input_data['slow_query'])
-    mean_cpu_usage = sum(input_data['cpu_usage']) / len(input_data['cpu_usage'])
-    max_cpu_usage = max(input_data['cpu_usage'])
-    min_cpu_usage = min(input_data['cpu_usage'])
-    mean_disk_usage = sum(input_data['disk_usage']) / len(input_data['disk_usage'])
-    max_disk_usage = max(input_data['disk_usage'])
-    min_disk_usage = min(input_data['disk_usage'])
-    mean_bandwidth_usage = sum(input_data['bandwidth_usage']) / len(input_data['bandwidth_usage'])
-    max_bandwidth_usage = max(input_data['bandwidth_usage'])
-    min_bandwidth_usage = min(input_data['bandwidth_usage'])
-    mean_response_time = sum(input_data['response_time']) / len(input_data['response_time'])
-    max_response_time = max(input_data['response_time'])
-    min_response_time = min(input_data['response_time'])
-    mean_client_buffer = sum(input_data['client_buffer']) / len(input_data['client_buffer'])
-    max_client_buffer = max(input_data['client_buffer'])
-    min_client_buffer = min(input_data['client_buffer'])
+    preprocessed_input_data = {}
+    for key in input_data.keys():
+        values = input_data[key]
+        preprocessed_input_data[key] = {
+            'mean': round(sum(values) / len(values), 2),
+            'max': round(max(values), 2),
+            'min': round(min(values), 2)
+        }
+    return preprocessed_input_data
+
+
+
+def preprocess_input_data(input_data):
+    # 对输入数据进行预处理，包括计算平均值、最大值和最小值
+    mean_memory_usage = round(sum(input_data['memory_usage']) / len(input_data['memory_usage']), 2)
+    max_memory_usage = round(max(input_data['memory_usage']), 2)
+    min_memory_usage = round(min(input_data['memory_usage']), 2)
+    mean_cache_hit_ratio = round(sum(input_data['cache_hit_ratio']) / len(input_data['cache_hit_ratio']), 2)
+    max_cache_hit_ratio = round(max(input_data['cache_hit_ratio']), 2)
+    min_cache_hit_ratio = round(min(input_data['cache_hit_ratio']), 2)
+    mean_connection_count = round(sum(input_data['connection_count']) / len(input_data['connection_count']), 2)
+    max_connection_count = round(max(input_data['connection_count']), 2)
+    min_connection_count = round(min(input_data['connection_count']), 2)
+    mean_slow_query = round(sum(input_data['slow_query']) / len(input_data['slow_query']), 2)
+    max_slow_query = round(max(input_data['slow_query']), 2)
+    min_slow_query = round(min(input_data['slow_query']), 2)
+    mean_cpu_usage = round(sum(input_data['cpu_usage']) / len(input_data['cpu_usage']), 2)
+    max_cpu_usage = round(max(input_data['cpu_usage']), 2)
+    min_cpu_usage = round(min(input_data['cpu_usage']), 2)
+    mean_disk_usage = round(sum(input_data['disk_usage']) / len(input_data['disk_usage']), 2)
+    max_disk_usage = round(max(input_data['disk_usage']), 2)
+    min_disk_usage = round(min(input_data['disk_usage']), 2)
+    mean_bandwidth_usage = round(sum(input_data['bandwidth_usage']) / len(input_data['bandwidth_usage']), 2)
+    max_bandwidth_usage = round(max(input_data['bandwidth_usage']), 2)
+    min_bandwidth_usage = round(min(input_data['bandwidth_usage']), 2)
+    mean_response_time = round(sum(input_data['response_time']) / len(input_data['response_time']), 2)
+    max_response_time = round(max(input_data['response_time']), 2)
+    min_response_time = round(min(input_data['response_time']), 2)
+    mean_client_buffer = round(sum(input_data['client_buffer']) / len(input_data['client_buffer']), 2)
+    max_client_buffer = round(max(input_data['client_buffer']), 2)
+    min_client_buffer = round(min(input_data['client_buffer']), 2)
 
     return {
         'memory_usage': {'mean': mean_memory_usage, 'max': max_memory_usage, 'min': min_memory_usage},
