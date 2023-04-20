@@ -1,105 +1,196 @@
+import json
 import unittest
-from decimal import Decimal
-
-from redis_diagnostic import RedisPerformanceDiagnosis, preprocess_input_data
+from redis_diagnostic import RedisPerformanceDiagnosis
 
 
 class TestRedisPerformanceDiagnosis(unittest.TestCase):
-
     def setUp(self):
-        # 示例 Redis 配置参数
-        config = {
-            'max_memory': 1024,
-            'max_bandwidth': 10,
-            'client_buffer_peak_usage': 1024,
-            'min_memory_usage': 0,
-            'min_cache_hit_ratio': 0,
-            'min_connection_count': 0,
-            'min_slow_query': 0,
-            'min_cpu_usage': 0,
-            'min_disk_usage': 0,
-            'min_bandwidth_usage': 0,
-            'min_response_time': 0,
-            'min_client_buffer': 0,
+        self.rules_file_path = 'redis_performance_rules.json'
+        self.input_data = {
+            'memory_usage': [100, 120, 140, 160, 180],
+            'cache_hit_ratio': [0.85, 0.87, 0.88, 0.9, 0.91],
+            'connection_count': [100, 110, 120, 130, 140],
+            'slow_query': [10, 8, 12, 15, 20],
+            'cpu_usage': [0.7, 0.8, 0.9, 0.85, 0.95]
         }
-
-        # 示例输入数据
-        input_data = {
-            'memory_usage': [250, 300, 280, 270, 290],
-            'cache_hit_ratio': [0.92, 0.95, 0.89, 0.91, 0.93],
-            'connection_count': [1000, 1200, 900, 1100, 1000],
-            'slow_query': [1, 2, 3, 4, 5],
-            'cpu_usage': [2.5, 3.0, 2.8, 2.7, 2.9],
-            'disk_usage': [500, 550, 520, 530, 540],
-            'bandwidth_usage': [5, 6, 4, 5, 5],
-            'response_time': [5, 6, 7, 8, 9],
-            'client_buffer': [1000, 1200, 900, 1000, 1100],
-        }
-        preprocessed_input_data = preprocess_input_data(input_data)
-        self.diagnosis = RedisPerformanceDiagnosis(**preprocessed_input_data, **config)
 
     def test_check_memory_usage(self):
-        result = self.diagnosis.check_memory_usage()
-        self.assertEqual(result, 'Memory usage is within the limit.')
+        # 测试内存使用率是否在限制范围内
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        result = diagnosis.check_memory_usage()
+        expected = diagnosis.rules['memory_usage']['within_limit']
+        self.assertEqual(result, expected)
+        # 测试内存使用率是否超出最大值
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['memory_usage']['threshold']['max'] = 130
+        result = diagnosis.check_memory_usage()
+        expected = diagnosis.rules['memory_usage']['exceed_limit']
+        self.assertEqual(result, expected)
+        # 测试内存使用率是否低于最小值
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['memory_usage']['threshold']['max'] = 1024
+        diagnosis.rules['memory_usage']['threshold']['min'] = 200
+        result = diagnosis.check_memory_usage()
+        expected = diagnosis.rules['memory_usage']['too_low']
+        self.assertEqual(result, expected)
 
     def test_check_cache_hit_ratio(self):
-        result = self.diagnosis.check_cache_hit_ratio()
-        self.assertEqual(result, 'Cache hit ratio is good.')
+        # 测试缓存命中率是否良好
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        result = diagnosis.check_cache_hit_ratio()
+        expected = diagnosis.rules['cache_hit_ratio']['good']
+        self.assertEqual(result, expected)
+        # 测试缓存命中率是否太低
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.preprocessed_input_data['cache_hit_ratio']['mean'] = 0.3
+        result = diagnosis.check_cache_hit_ratio()
+        expected = diagnosis.rules['cache_hit_ratio']['too_low']
+        self.assertEqual(result, expected)
+        # 测试缓存命中率是否非常低
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.preprocessed_input_data['cache_hit_ratio']['mean'] = 0.1
+        result = diagnosis.check_cache_hit_ratio()
+        expected = diagnosis.rules['cache_hit_ratio']['very_low']
+        self.assertEqual(result, expected)
 
     def test_check_connection_count(self):
-        result = self.diagnosis.check_connection_count()
-        self.assertEqual(result, 'Connection count is within the limit.')
+        # 测试连接数是否在限制范围内
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        result = diagnosis.check_connection_count()
+        expected = diagnosis.rules['connection_count']['within_limit']
+        self.assertEqual(result, expected)
+        # 测试连接数是否超出最大值
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['connection_count']['threshold']['max'] = 120
+        result = diagnosis.check_connection_count()
+        expected = diagnosis.rules['connection_count']['exceed_limit']
+        self.assertEqual(result, expected)
+        # 测试连接数是否太低
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['connection_count']['threshold']['min'] = 130
+        result = diagnosis.check_connection_count()
+        expected = diagnosis.rules['connection_count']['too_low']
+        self.assertEqual(result, expected)
 
     def test_check_slow_query(self):
-        result = self.diagnosis.check_slow_query()
-        self.assertEqual(result, 'Slow query count is within the limit.')
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        # 测试慢查询是否在限制范围内
+        result = diagnosis.check_slow_query()
+        expected = diagnosis.rules['slow_query']['within_limit']
+        self.assertEqual(result, expected)
+        # 测试慢查询是否超出最大值
+        diagnosis.rules['slow_query']['threshold']['max'] = 10
+        result = diagnosis.check_slow_query()
+        expected = diagnosis.rules['slow_query']['exceed_limit']
+        self.assertEqual(result, expected)
 
     def test_check_cpu_usage(self):
-        result = self.diagnosis.check_cpu_usage()
-        self.assertEqual(result, 'CPU usage is within the limit.')
+        # 测试 CPU 使用率是否在限制范围内
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        result = diagnosis.check_cpu_usage()
+        expected = diagnosis.rules['cpu_usage']['within_limit']
+        self.assertEqual(result, expected)
+        # 测试 CPU 使用率是否超出最大值
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['cpu_usage']['threshold']['max'] = 0.8
+        result = diagnosis.check_cpu_usage()
+        expected = diagnosis.rules['cpu_usage']['exceed_limit']
+        self.assertEqual(result, expected)
 
-    def test_check_disk_usage(self):
-        result = self.diagnosis.check_disk_usage()
-        self.assertEqual(result, 'Disk usage is within the limit.')
-
-    def test_check_bandwidth_usage(self):
-        result = self.diagnosis.check_bandwidth_usage()
-        self.assertEqual(result, 'Bandwidth usage is within the limit.')
-
-    def test_check_response_time(self):
-        result = self.diagnosis.check_response_time()
-        self.assertEqual(result, 'Response time is good.')
-
-    def test_check_client_buffer(self):
-        result = self.diagnosis.check_client_buffer()
-        self.assertEqual(result, 'Client buffer usage exceeds the limit. You should optimize your Redis configuration '
-                                 'or client application.')
-
-    def test_preprocess_input_data(self):
-        input_data = {
-            'memory_usage': [250, 300, 280, 270, 290],
-            'cache_hit_ratio': [0.92, 0.95, 0.89, 0.91, 0.93],
-            'connection_count': [1000, 1200, 900, 1100, 1000],
-            'slow_query': [1, 2, 3, 4, 5],
-            'cpu_usage': [2.5, 3.0, 2.8, 2.7, 2.9],
-            'disk_usage': [500, 550, 520, 530, 540],
-            'bandwidth_usage': [5, 6, 4, 5, 5],
-            'response_time': [5, 6, 7, 8, 9],
-            'client_buffer': [1000, 1200, 900, 1000, 1100],
+    def test_diagnose(self):
+        # 测试诊断结果是否包含所有问题
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        result = diagnosis.diagnose()
+        expected = {
+            'memory_usage': diagnosis.rules['memory_usage']['within_limit'],
+            'cache_hit_ratio': diagnosis.rules['cache_hit_ratio']['good'],
+            'connection_count': diagnosis.rules['connection_count']['within_limit'],
+            'slow_query': diagnosis.rules['slow_query']['within_limit'],
+            'cpu_usage': diagnosis.rules['cpu_usage']['within_limit']
         }
-        expected_output = {
-            'memory_usage': {'mean': 278, 'max': 300, 'min': 250},
-            'cache_hit_ratio': {'mean': 0.92, 'max': 0.95, 'min': 0.89},
-            'connection_count': {'mean': 1040, 'max': 1200, 'min': 900},
-            'slow_query': {'mean': 3, 'max': 5, 'min': 1},
-            'cpu_usage': {'mean': 2.78, 'max': 3.0, 'min': 2.5},
-            'disk_usage': {'mean': 528, 'max': 550, 'min': 500},
-            'bandwidth_usage': {'mean': 5.0, 'max': 6, 'min': 4},
-            'response_time': {'mean': 7.0, 'max': 9, 'min': 5},
-            'client_buffer': {'mean': 1040, 'max': 1200, 'min': 900},
-        }
-        output = preprocess_input_data(input_data)
-        self.assertEqual(output, expected_output)
+        self.assertEqual(result, expected)
 
-if __name__ == '__main__':
-    unittest.main()
+        # 修改内存使用率阈值，测试内存使用率是否超过限制
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['memory_usage']['threshold']['max'] = 120
+        result = diagnosis.diagnose()
+        expected = {
+            'memory_usage': diagnosis.rules['memory_usage']['exceed_limit'],
+            'cache_hit_ratio': diagnosis.rules['cache_hit_ratio']['good'],
+            'connection_count': diagnosis.rules['connection_count']['within_limit'],
+            'slow_query': diagnosis.rules['slow_query']['within_limit'],
+            'cpu_usage': diagnosis.rules['cpu_usage']['within_limit']
+        }
+        result_str = str(result)
+        expected_str = str(expected)
+        self.assertEqual(result_str, expected_str)
+
+        # 修改 CPU 使用率阈值，测试 CPU 使用率是否超过限制
+        diagnosis = RedisPerformanceDiagnosis(self.input_data, self.rules_file_path)
+        diagnosis.rules['cpu_usage']['threshold']['max'] = 0.8
+        result = diagnosis.diagnose()
+        expected = {
+            'memory_usage': diagnosis.rules['memory_usage']['within_limit'],
+            'cache_hit_ratio': diagnosis.rules['cache_hit_ratio']['good'],
+            'connection_count': diagnosis.rules['connection_count']['within_limit'],
+            'slow_query': diagnosis.rules['slow_query']['within_limit'],
+            'cpu_usage': diagnosis.rules['cpu_usage']['exceed_limit']
+        }
+        result_str = str(result)
+        expected_str = str(expected)
+        self.assertEqual(result_str, expected_str)
+
+    def test_preprocess_data(self):
+        data = {
+            "memory_usage": [100, 200, 300],
+            "cache_hit_ratio": [0.8, 0.7, 0.6],
+            "connection_count": [500, 400, 300],
+            "slow_query": [5, 10, 15],
+            "cpu_usage": [0.5, 0.6, 0.7],
+            "disk_usage": [0.7, 0.8, 0.9],
+            "bandwidth_usage": [50, 60, 70],
+            "response_time": [0.02, 0.03, 0.04],
+            "client_buffer": [1024, 2048, 3072]
+        }
+        diagnosis = RedisPerformanceDiagnosis(data, self.rules_file_path)
+        p_data = diagnosis.preprocess_input_data()
+
+        # Test if the length of the preprocessed data is correct
+        self.assertEqual(len(p_data), len(data))
+
+        # Test if the average, minimum and maximum values are correctly calculated for each metric
+        self.assertEqual(p_data['memory_usage']['mean'], 200)
+        self.assertEqual(p_data['memory_usage']['min'], 100)
+        self.assertEqual(p_data['memory_usage']['max'], 300)
+
+        self.assertEqual(p_data['cache_hit_ratio']['mean'], 0.7)
+        self.assertEqual(p_data['cache_hit_ratio']['min'], 0.6)
+        self.assertEqual(p_data['cache_hit_ratio']['max'], 0.8)
+
+        self.assertEqual(p_data['connection_count']['mean'], 400)
+        self.assertEqual(p_data['connection_count']['min'], 300)
+        self.assertEqual(p_data['connection_count']['max'], 500)
+
+        self.assertEqual(p_data['slow_query']['mean'], 10)
+        self.assertEqual(p_data['slow_query']['min'], 5)
+        self.assertEqual(p_data['slow_query']['max'], 15)
+
+        self.assertEqual(p_data['cpu_usage']['mean'], 0.6)
+        self.assertEqual(p_data['cpu_usage']['min'], 0.5)
+        self.assertEqual(p_data['cpu_usage']['max'], 0.7)
+
+        self.assertEqual(p_data['disk_usage']['mean'], 0.8)
+        self.assertEqual(p_data['disk_usage']['min'], 0.7)
+        self.assertEqual(p_data['disk_usage']['max'], 0.9)
+
+        self.assertEqual(p_data['bandwidth_usage']['mean'], 60)
+        self.assertEqual(p_data['bandwidth_usage']['min'], 50)
+        self.assertEqual(p_data['bandwidth_usage']['max'], 70)
+
+        self.assertEqual(p_data['response_time']['mean'], 0.03)
+        self.assertEqual(p_data['response_time']['min'], 0.02)
+        self.assertEqual(p_data['response_time']['max'], 0.04)
+
+        self.assertEqual(p_data['client_buffer']['mean'], 2048)
+        self.assertEqual(p_data['client_buffer']['min'], 1024)
+        self.assertEqual(p_data['client_buffer']['max'], 3072)

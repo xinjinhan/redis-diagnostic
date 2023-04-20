@@ -1,0 +1,115 @@
+{
+  "memory_usage": {
+    "threshold": {
+      "min": 50,
+      "max": 1024
+    },
+    "within_limit": "Memory usage is within the limit.",
+    "exceed_limit": "Memory usage exceeds the limit. You should increase the memory limit or optimize your Redis configuration.",
+    "too_low": "Memory usage is too low. You should consider increasing the memory limit.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider reducing the amount of data stored in Redis or optimizing your Redis configuration.",
+      "too_low": "Consider increasing the memory limit to better accommodate your application's needs."
+    }
+  },
+  "cache_hit_ratio": {
+    "threshold": {
+      "min": 0.5,
+      "mean": 0.6,
+      "max": 0.8
+    },
+    "good": "Cache hit ratio is good.",
+    "too_low": "Cache hit ratio is too low. You should optimize your Redis configuration or check your cache usage.",
+    "very_low": "Cache hit ratio is very low. You should check your cache usage.",
+    "optimization_suggestions": {
+      "too_low": "Consider optimizing your Redis configuration or adjusting your cache usage to improve the hit ratio.",
+      "very_low": "Consider reviewing your caching strategy and patterns to better leverage Redis and improve performance."
+    }
+  },
+  "connection_count": {
+    "threshold": {
+      "min": 10,
+      "mean": 5000,
+      "max": 10000
+    },
+    "within_limit": "Connection count is within the limit.",
+    "exceed_limit": "Connection count exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "too_low": "Connection count is too low. You should check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration to better accommodate your application's needs or scaling your Redis deployment to support more connections.",
+      "too_low": "Consider reviewing your application's connection management and scaling your Redis deployment to better accommodate your needs."
+    }
+  },
+  "slow_query": {
+    "threshold": {
+      "mean": 10,
+      "max": 100
+    },
+    "within_limit": "Slow query count is within the limit.",
+    "exceed_limit": "Slow query count exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "too_high": "Slow query count is too high. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration by using appropriate indexes or reconfiguring your data model to reduce the number of queries.",
+      "too_high": "Consider monitoring your slow query count over time to detect patterns and potential issues."
+    }
+  },
+  "cpu_usage": {
+    "threshold": {
+      "mean": 0.8,
+      "max": 1
+    },
+    "within_limit": "CPU usage is within the limit.",
+    "exceed_limit": "CPU usage exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration or scaling your deployment to support higher loads."
+    }
+  },
+  "disk_usage": {
+    "threshold": {
+      "mean": 0.8,
+      "max": 1
+    },
+    "within_limit": "Disk usage is within the limit.",
+    "exceed_limit": "Disk usage exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration or archiving old data to reduce disk usage.",
+      "too_low": "Consider increasing the amount of data stored in Redis or reviewing your application's data storage strategy."
+    }
+  },
+  "bandwidth_usage": {
+    "threshold": {
+      "mean": 10,
+      "max": 100
+    },
+    "within_limit": "Bandwidth usage is within the limit.",
+    "exceed_limit": "Bandwidth usage exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration or optimizing your application's data usage and caching strategy.",
+      "too_low": "Consider increasing the amount of data stored in Redis or reviewing your application's data storage and caching strategies."
+    }
+  },
+  "response_time": {
+    "threshold": {
+      "mean": 0.01,
+      "max": 0.1
+    },
+    "within_limit": "Response time is within the limit.",
+    "exceed_limit": "Response time exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration or reviewing your application's data access patterns to reduce response time.",
+      "too_low": "Consider increasing the amount of data stored in Redis or reviewing your application's data access patterns to better utilize Redis's capabilities."
+    }
+  },
+  "client_buffer": {
+    "threshold": {
+      "mean": 1024,
+      "max": 2048
+    },
+    "within_limit": "Client buffer usage is within the limit.",
+    "exceed_limit": "Client buffer usage exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+    "optimization_suggestions": {
+      "exceed_limit": "Consider optimizing your Redis configuration or reviewing your application's data access patterns to reduce the size of client buffers.",
+      "too_low": "Consider increasing the size of client buffers or reviewing your application's data access patterns to better utilize Redis's capabilities."
+    }
+  }
+}
