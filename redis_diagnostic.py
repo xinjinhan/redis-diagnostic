@@ -202,3 +202,87 @@ def check_keys_in_db(self):
         return "below_limit"
     else:
         return "within_limit"
+
+
+def diagnose(self):
+    results = {}
+
+    result_check_memory_usage_ratio = self.check_memory_usage_ratio()
+    results['memory_usage_ratio'] = {
+        "result": "{}-{}".format(result_check_memory_usage_ratio,
+                                 self.rules['memory_usage_ratio'][result_check_memory_usage_ratio])
+    }
+
+    result_check_evicted_keys = self.check_evicted_keys()
+    results['evicted_keys'] = {
+        "result": "{}-{}".format(result_check_evicted_keys,
+                                 self.rules['evicted_keys'][result_check_evicted_keys])
+    }
+
+    result_check_expired_keys = self.check_expired_keys()
+    results['expired_keys'] = {
+        "result": "{}-{}".format(result_check_expired_keys,
+                                 self.rules['expired_keys'][result_check_expired_keys])
+    }
+
+    result_check_keyspace_hits = self.check_keyspace_hits()
+    results['keyspace_hits'] = {
+        "result": "{}-{}".format(result_check_keyspace_hits,
+                                 self.rules['keyspace_hits'][result_check_keyspace_hits])
+    }
+
+    result_check_keyspace_misses = self.check_keyspace_misses()
+    results['keyspace_misses'] = {
+        "result": "{}-{}".format(result_check_keyspace_misses,
+                                 self.rules['keyspace_misses'][result_check_keyspace_misses])
+    }
+
+    result_check_blocked_clients = self.check_blocked_clients()
+    results['blocked_clients'] = {
+        "result": "{}-{}".format(result_check_blocked_clients,
+                                 self.rules['blocked_clients'][result_check_blocked_clients])
+    }
+
+    result_check_total_connections_received = self.check_total_connections_received()
+    results['total_connections_received'] = {
+        "result": "{}-{}".format(result_check_total_connections_received,
+                                 self.rules['total_connections_received'][result_check_total_connections_received])
+    }
+
+    result_check_instantaneous_ops_per_sec = self.check_instantaneous_ops_per_sec()
+    results['instantaneous_ops_per_sec'] = {
+        "result": "{}-{}".format(result_check_instantaneous_ops_per_sec,
+                                 self.rules['instantaneous_ops_per_sec'][result_check_instantaneous_ops_per_sec])
+    }
+
+    result_check_instantaneous_input_kbps = self.check_instantaneous_input_kbps()
+    results['instantaneous_input_kbps'] = {
+        "result": "{}-{}".format(result_check_instantaneous_input_kbps,
+                                 self.rules['instantaneous_input_kbps'][result_check_instantaneous_input_kbps])
+    }
+
+    result_check_instantaneous_output_kbps = self.check_instantaneous_output_kbps()
+    results['instantaneous_output_kbps'] = {
+        "result": "{}-{}".format(result_check_instantaneous_output_kbps,
+                                 self.rules['instantaneous_output_kbps'][result_check_instantaneous_output_kbps])
+    }
+
+    result_check_used_cpu_sys = self.check_used_cpu_sys()
+    results['used_cpu_sys'] = {
+        "result": "{}-{}".format(result_check_used_cpu_sys,
+                                 self.rules['used_cpu_sys'][result_check_used_cpu_sys])
+    }
+
+    result_check_used_cpu_user = self.check_used_cpu_user()
+    results['used_cpu_user'] = {
+        "result": "{}-{}".format(result_check_used_cpu_user,
+                                 self.rules['used_cpu_user'][result_check_used_cpu_user])
+    }
+
+    result_check_keys_in_db = self.check_keys_in_db()
+    results['keys_in_db'] = {
+        "result": "{}-{}".format(result_check_keys_in_db,
+                                 self.rules['keys_in_db'][result_check_keys_in_db])
+    }
+
+    return results
