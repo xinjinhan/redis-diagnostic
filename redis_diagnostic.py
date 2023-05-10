@@ -204,6 +204,19 @@ def check_keys_in_db(self):
         return "within_limit"
 
 
+def check_used_memory_rss(self):
+    used_memory_rss = self.preprocessed_input_data['used_memory_rss']
+    mean_used_memory_rss = used_memory_rss['mean']
+    max_used_memory_rss = self.rules['used_memory_rss']['threshold']['max']
+    min_used_memory_rss = self.rules['used_memory_rss']['threshold']['min']
+    if mean_used_memory_rss > max_used_memory_rss:
+        return "exceed_limit"
+    elif mean_used_memory_rss < min_used_memory_rss:
+        return "too_low"
+    else:
+        return "within_limit"
+
+
 def diagnose(self):
     results = {}
 
@@ -283,6 +296,12 @@ def diagnose(self):
     results['keys_in_db'] = {
         "result": "{}-{}".format(result_check_keys_in_db,
                                  self.rules['keys_in_db'][result_check_keys_in_db])
+    }
+
+    result_check_used_memory_rss = self.check_used_memory_rss()
+    results['used_memory_rss'] = {
+        "result": "{}-{}".format(result_check_used_memory_rss,
+                                 self.rules['used_memory_rss'][result_check_used_memory_rss])
     }
 
     return results

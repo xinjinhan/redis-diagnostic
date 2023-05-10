@@ -281,17 +281,36 @@
         }
     },
     "keys_in_db": {
-    "threshold": {
-        "min": 100,
-        "mean": 1000,
-        "max": 5000
+        "threshold": {
+            "min": 100,
+            "mean": 1000,
+            "max": 5000
+        },
+        "within_limit": "The number of keys in the database is within the limit.",
+        "exceed_limit": "The number of keys in the database exceeds the limit. You should optimize your Redis configuration or check your application usage.",
+        "too_low": "The number of keys in the database is too low. Consider adding more keys to fully utilize Redis's capabilities.",
+        "optimization_suggestions": {
+            "exceed_limit": "Consider optimizing your Redis configuration, reducing the number of unused keys, or reviewing your application's data access patterns to reduce the number of keys in the database.",
+            "too_low": "Consider adding more keys or reviewing your application's data access patterns to better utilize Redis's capabilities."
+        }
     },
-    "within_limit": "The number of keys in the database is within the limit.",
-    "exceed_limit": "The number of keys in the database exceeds the limit. You should optimize your Redis configuration or check your application usage.",
-    "too_low": "The number of keys in the database is too low. Consider adding more keys to fully utilize Redis's capabilities.",
-    "optimization_suggestions": {
-        "exceed_limit": "Consider optimizing your Redis configuration, reducing the number of unused keys, or reviewing your application's data access patterns to reduce the number of keys in the database.",
-        "too_low": "Consider adding more keys or reviewing your application's data access patterns to better utilize Redis's capabilities."
+    "used_memory_rss": {
+        "threshold": {
+            "min": 10000000,
+            "max": 500000000
+        },
+        "within_limit": "Used memory (RSS) is within the limit.",
+        "exceed_limit": "Used memory (RSS) exceeds the limit. You should review your Redis configuration and optimize it.",
+        "below_limit": "Used memory (RSS) is below the limit. Your Redis server may be under-utilized.",
+        "optimization_suggestions": {
+            "exceed_limit": {
+                "maxmemory": "Consider setting a maxmemory limit in your Redis configuration to control memory usage.",
+                "maxmemory-policy": "Consider setting a maxmemory-policy in your Redis configuration to control how Redis should behave when maxmemory is reached.",
+                "hardware_upgrade": "Consider upgrading your server's hardware if necessary."
+            },
+            "too_low": {
+                "maxmemory": "If maxmemory is set too low, consider increasing it to better utilize Redis's capabilities."
+            }
+        }
     }
-}
 }
