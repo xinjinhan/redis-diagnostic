@@ -220,12 +220,6 @@ def check_used_memory_rss(self):
 def diagnose(self):
     results = {}
 
-    result_check_memory_usage_ratio = self.check_memory_usage_ratio()
-    results['memory_usage_ratio'] = {
-        "result": "{}-{}".format(result_check_memory_usage_ratio,
-                                 self.rules['memory_usage_ratio'][result_check_memory_usage_ratio])
-    }
-
     result_check_evicted_keys = self.check_evicted_keys()
     results['evicted_keys'] = {
         "result": "{}-{}".format(result_check_evicted_keys,
@@ -303,5 +297,27 @@ def diagnose(self):
         "result": "{}-{}".format(result_check_used_memory_rss,
                                  self.rules['used_memory_rss'][result_check_used_memory_rss])
     }
-
     return results
+
+
+input_data = {"memory_usage": [100, 120, 200, 300, 400, 100],
+              "memory_fragmentation": [100, 200, 300, 200, 100],
+              "cache_hit_rate": [0.8, 0.9, 0.85, 0.87, 0.92],
+              "client_connections": [10, 20, 30, 40, 50],
+              "slow_queries": [10, 5, 3, 2, 1],
+              "network_latency": [10, 20, 15, 18, 22],
+              "master_slave_sync_latency": [100, 200, 150, 180, 220],
+              "aof_rdb_duration": [10, 20, 15, 18, 22],
+              "evicted_keys": [100, 120, 130, 110, 90],
+              "expired_keys": [50, 60, 70, 80, 90],
+              "keyspace_hits": [1000, 2000, 3000, 4000, 5000],
+              "keyspace_misses": [100, 200, 300, 400, 500],
+              "blocked_clients": [5, 10, 15, 20, 25],
+              "total_connections_received": [100, 200, 300, 400, 500],
+              "instantaneous_ops_per_sec": [100, 200, 300, 400, 500],
+              "instantaneous_input_kbps": [50, 60, 70, 80, 90],
+              "instantaneous_output_kbps": [50, 60, 70, 80, 90],
+              "used_cpu_sys": [50, 60, 70, 80, 90],
+              "used_cpu_user": [50, 60, 70, 80, 90],
+              "keys_in_db": [50, 100, 200, 300, 400],
+              "used_memory_rss": [100, 200, 300, 400, 500]}

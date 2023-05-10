@@ -18,3 +18,4 @@
 "used_cpu_sys"
 "used_cpu_user"
 "keys_in_db"
+"used_memory_rss"
