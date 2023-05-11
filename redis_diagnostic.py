@@ -270,3 +270,132 @@ class RedisDiagnosticTool:
         else:
             return "unknown"
 
+
+def diagnose(self):
+    def diagnose(self):
+        result_check_memory_usage_ratio = self.check_memory_usage_ratio()
+        result_check_memory_fragmentation = self.check_memory_fragmentation()
+        result_check_cache_hit_rate = self.check_cache_hit_rate()
+        result_check_client_connections = self.check_client_connections()
+        result_check_slow_queries = self.check_slow_queries()
+        result_check_network_latency = self.check_network_latency()
+        result_check_master_slave_sync_latency = self.check_master_slave_sync_latency()
+        result_check_aof_rdb_duration = self.check_aof_rdb_duration()
+        result_check_evicted_keys = self.check_evicted_keys()
+        result_check_expired_keys = self.check_expired_keys()
+        result_check_keyspace_hits = self.check_keyspace_hits()
+        result_check_keyspace_misses = self.check_keyspace_misses()
+        result_check_blocked_clients = self.check_blocked_clients()
+        result_check_total_connections_received = self.check_total_connections_received()
+        result_check_instantaneous_ops_per_sec = self.check_instantaneous_ops_per_sec()
+        result_check_instantaneous_input_kbps = self.check_instantaneous_input_kbps()
+        result_check_instantaneous_output_kbps = self.check_instantaneous_output_kbps()
+        result_check_used_cpu_sys = self.check_used_cpu_sys()
+        result_check_used_cpu_user = self.check_used_cpu_user()
+        result_check_keys_in_db = self.check_keys_in_db()
+        result_check_used_memory_rss = self.check_used_memory_rss()
+
+        results = {}
+
+        if result_check_memory_usage_ratio != "within_limit":
+            results['memory_usage_ratio'] = {"result": "{}--{}".format(result_check_memory_usage_ratio,
+                                                                       self.rules['memory_usage_ratio'][
+                                                                           result_check_memory_usage_ratio])}
+
+        if result_check_memory_fragmentation != "within_limit":
+            results['memory_fragmentation'] = {"result": "{}--{}".format(result_check_memory_fragmentation,
+                                                                         self.rules['memory_fragmentation'][
+                                                                             result_check_memory_fragmentation])}
+
+        if result_check_cache_hit_rate != "within_limit":
+            results['cache_hit_rate'] = {"result": "{}--{}".format(result_check_cache_hit_rate,
+                                                                   self.rules['cache_hit_rate'][
+                                                                       result_check_cache_hit_rate])}
+
+        if result_check_client_connections != "within_limit":
+            results['client_connections'] = {"result": "{}--{}".format(result_check_client_connections,
+                                                                       self.rules['client_connections'][
+                                                                           result_check_client_connections])}
+
+        if result_check_slow_queries != "within_limit":
+            results['slow_queries'] = {"result": "{}--{}".format(result_check_slow_queries,
+                                                                 self.rules['slow_queries'][result_check_slow_queries])}
+
+        if result_check_network_latency != "within_limit":
+            results['network_latency'] = {"result": "{}--{}".format(result_check_network_latency,
+                                                                    self.rules['network_latency'][
+                                                                        result_check_network_latency])}
+
+        if result_check_master_slave_sync_latency != "within_limit":
+            results['master_slave_sync_latency'] = {"result": "{}--{}".format(result_check_master_slave_sync_latency,
+                                                                              self.rules['master_slave_sync_latency'][
+                                                                               result_check_master_slave_sync_latency])}
+
+        if result_check_aof_rdb_duration != "within_limit":
+            results['aof_rdb_duration'] = {"result": "{}--{}".format(result_check_aof_rdb_duration,
+                                                                     self.rules['aof_rdb_duration'][
+                                                                         result_check_aof_rdb_duration])}
+
+        if result_check_evicted_keys != "within_limit":
+            results['evicted_keys'] = {"result": "{}--{}".format(result_check_evicted_keys,
+                                                                 self.rules['evicted_keys'][result_check_evicted_keys])}
+
+        if result_check_expired_keys != "within_limit":
+            results['expired_keys'] = {"result": "{}--{}".format(result_check_expired_keys,
+                                                                 self.rules['expired_keys'][result_check_expired_keys])}
+
+        if result_check_keyspace_hits != "within_limit":
+            results['keyspace_hits'] = {"result": "{}--{}".format(result_check_keyspace_hits,
+                                                                  self.rules['keyspace_hits'][
+                                                                      result_check_keyspace_hits])}
+
+        if result_check_keyspace_misses != "within_limit":
+            results['keyspace_misses'] = {"result": "{}--{}".format(result_check_keyspace_misses,
+                                                                    self.rules['keyspace_misses'][
+                                                                        result_check_keyspace_misses])}
+
+        if result_check_blocked_clients != "within_limit":
+            results['blocked_clients'] = {"result": "{}--{}".format(result_check_blocked_clients,
+                                                                    self.rules['blocked_clients'][
+                                                                        result_check_blocked_clients])}
+
+        if result_check_total_connections_received != "within_limit":
+            results['total_connections_received'] = {"result": "{}--{}".format(result_check_total_connections_received,
+                                                                               self.rules['total_connections_received'][
+                                                                            result_check_total_connections_received])}
+
+        if result_check_instantaneous_ops_per_sec != "within_limit":
+            results['instantaneous_ops_per_sec'] = {"result": "{}--{}".format(result_check_instantaneous_ops_per_sec,
+                                                                              self.rules['instantaneous_ops_per_sec'][
+                                                                            result_check_instantaneous_ops_per_sec])}
+
+        if result_check_instantaneous_input_kbps != "within_limit":
+            results['instantaneous_input_kbps'] = {"result": "{}--{}".format(result_check_instantaneous_input_kbps,
+                                                                             self.rules['instantaneous_input_kbps'][
+                                                                            result_check_instantaneous_input_kbps])}
+
+        if result_check_instantaneous_output_kbps != "within_limit":
+            results['instantaneous_output_kbps'] = {"result": "{}--{}".format(result_check_instantaneous_output_kbps,
+                                                                              self.rules['instantaneous_output_kbps'][
+                                                                            result_check_instantaneous_output_kbps])}
+
+        if result_check_used_cpu_sys != "within_limit":
+            results['used_cpu_sys'] = {"result": "{}--{}".format(result_check_used_cpu_sys,
+                                                                 self.rules['used_cpu_sys'][result_check_used_cpu_sys])}
+
+        if result_check_used_cpu_user != "within_limit":
+            results['used_cpu_user'] = {"result": "{}--{}".format(result_check_used_cpu_user,
+                                                                  self.rules['used_cpu_user'][
+                                                                      result_check_used_cpu_user])}
+
+        if result_check_keys_in_db != "within_limit":
+            results['keys_in_db'] = {
+                "result": "{}--{}".format(result_check_keys_in_db, self.rules['keys_in_db'][result_check_keys_in_db])}
+
+        if result_check_used_memory_rss != "within_limit":
+            results['result_check_used_memory_rss'] = {
+                "result": "{}--{}".format(result_check_keys_in_db,
+                                          self.rules['result_check_used_memory_rss'][result_check_keys_in_db])}
+
+        return results
+
