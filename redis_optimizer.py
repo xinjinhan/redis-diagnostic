@@ -10,11 +10,28 @@ class RedisOptimizer:
         self.redis = redis.Redis(host=redis_host, port=redis_port)
         self.history = pd.DataFrame(columns=['params', 'performance'])
 
-    def evaluate_performance(self):
+    def evaluate_response_time(self):
         start = time.time()
         self.redis.ping()
         end = time.time()
         return end - start  # 返回响应时间
+
+    def evaluate_latency(self):
+        latency = self.redis.execute_command('LATENCY LATEST')
+        return latency[0][2] if latency else 0  # 返回最新的延迟值
+
+    def evaluate_throughput(self):
+        start = time.time()
+        for _ in range(1000):
+            self.redis.ping()
+        end = time.time()
+        return 1000 / (end - start)  # 返回吞吐量（每秒查询数）
+
+    def evaluate_cache_hit_rate(self):
+        stats = self.redis.info('stats')
+        hits = stats['keyspace_hits']
+        misses = stats['keyspace_misses']
+        return hits / (hits + misses) if hits + misses > 0 else 0  # 返回缓存命中率
 
     def objective(self, params):
         param_names = ['timeout', 'tcp-keepalive', 'maxclients', 'maxmemory', 'maxmemory-policy',
