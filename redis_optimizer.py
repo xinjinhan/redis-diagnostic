@@ -17,22 +17,28 @@ class RedisOptimizer:
         return end - start  # 返回响应时间
 
     def objective(self, params):
-        # 这里我们假设params是一个字典，其中的键是配置参数的名称，值是要设置的值
-        for name, value in params.items():
+        param_names = ['timeout', 'tcp-keepalive', 'maxclients', 'maxmemory', 'maxmemory-policy',
+                       'hash-max-ziplist-entries', 'hash-max-ziplist-value', 'list-max-ziplist-size',
+                       'zset-max-ziplist-entries', 'zset-max-ziplist-value']
+        params_dict = dict(zip(param_names, params))
+
+        for name, value in params_dict.items():
             self.redis.config_set(name, value)
+
         performance = self.evaluate_performance()
-        self.history = self.history.append({'params': params, 'performance': performance}, ignore_index=True)
+        self.history = self.history.append({'params': params_dict, 'performance': performance}, ignore_index=True)
+
         return performance
 
     def optimize(self, n_calls=100):
-        # 这里我们需要定义一个参数空间，每个参数的范围和类型
-        # 这需要根据你的具体需求来定义
         space = [
             Integer(0, 60, name='timeout'),
             Integer(0, 300, name='tcp-keepalive'),
             Integer(1, 10000, name='maxclients'),
             Integer(0, 10000, name='maxmemory'),
-            Categorical(['volatile-lru', 'allkeys-lru', 'volatile-random', 'allkeys-random', 'volatile-ttl', 'noeviction'], name='maxmemory-policy'),
+            Categorical(
+                ['volatile-lru', 'allkeys-lru', 'volatile-random', 'allkeys-random', 'volatile-ttl', 'noeviction'],
+                name='maxmemory-policy'),
             Integer(0, 512, name='hash-max-ziplist-entries'),
             Integer(0, 64, name='hash-max-ziplist-value'),
             Integer(0, 8, name='list-max-ziplist-size'),
