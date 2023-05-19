@@ -34,9 +34,10 @@ class RedisOptimizer:
         return hits / (hits + misses) if hits + misses > 0 else 0  # 返回缓存命中率
 
     def objective(self, params):
-        param_names = ['timeout', 'tcp-keepalive', 'maxclients', 'maxmemory', 'maxmemory-policy',
+        param_names = ['timeout', 'tcp-keepalive', 'maxclients', 'maxmemory-policy',
                        'hash-max-ziplist-entries', 'hash-max-ziplist-value', 'list-max-ziplist-size',
-                       'zset-max-ziplist-entries', 'zset-max-ziplist-value']
+                       'zset-max-ziplist-entries', 'zset-max-ziplist-value', 'hash-max-ziplist-entries-cpu',
+                       'hash-max-ziplist-value-cpu']
         params_dict = dict(zip(param_names, params))
 
         for name, value in params_dict.items():
@@ -52,7 +53,6 @@ class RedisOptimizer:
             Integer(0, 60, name='timeout'),
             Integer(0, 300, name='tcp-keepalive'),
             Integer(1, 10000, name='maxclients'),
-            Integer(0, 10000, name='maxmemory'),
             Categorical(
                 ['volatile-lru', 'allkeys-lru', 'volatile-random', 'allkeys-random', 'volatile-ttl', 'noeviction'],
                 name='maxmemory-policy'),
@@ -60,7 +60,10 @@ class RedisOptimizer:
             Integer(0, 64, name='hash-max-ziplist-value'),
             Integer(0, 8, name='list-max-ziplist-size'),
             Integer(0, 128, name='zset-max-ziplist-entries'),
-            Integer(0, 64, name='zset-max-ziplist-value')
+            Integer(0, 64, name='zset-max-ziplist-value'),
+            # 添加CPU相关的参数
+            Integer(1, 100, name='hash-max-ziplist-entries'),
+            Integer(1, 100, name='hash-max-ziplist-value')
         ]
         res = gp_minimize(self.objective, space, n_calls=n_calls)
         return res
